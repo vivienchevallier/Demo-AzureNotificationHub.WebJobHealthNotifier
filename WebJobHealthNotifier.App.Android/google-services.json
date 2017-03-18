@@ -1,0 +1,43 @@
+{
+  "_Comments": "Setup your own google-services.json file, this one can be revoked at any time. https://developer.xamarin.com/guides/android/application_fundamentals/notifications/firebase-cloud-messaging/#Setting_Up_Firebase_Cloud_Messaging",
+  "project_info": {
+    "project_number": "1070116761511",
+    "firebase_url": "https://webjob-health-notifier.firebaseio.com",
+    "project_id": "webjob-health-notifier",
+    "storage_bucket": "webjob-health-notifier.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1070116761511:android:704e7701a181bd09",
+        "android_client_info": {
+          "package_name": "com.webjobhealthnotifier"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1070116761511-3fe1nblvfqhsbrrv1de2fk9fh93tj88h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH-eQ2CEUUinCYNaFQOAsZ9DuV1UTjl1Y"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,186 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "hostingPlanSkuName": {
+      "type": "string",
+      "defaultValue": "B1",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "metadata": {
+        "description": "Describes plan's pricing tier and instance size. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "hostingPlanSkuCapacity": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "metadata": {
+        "description": "Describes plan's instance count"
+      }
+    },
+    "notificationHubGcmApiKey": {
+      "type": "securestring",
+      "defaultValue": "AAAA-Sft76c:APA91bHNqt2nvOH8bNpkGEXylGes_WaKypYvPlLuWFl7FwaBIZKOfAp-nSbZdST-ZU6m1CuDvAU0y3VC15aKRDz_TNYtd7Yjd_nebf9Z0xDto093v_TdrcZeGm6Axvjz7bxBthlCpOvW",
+      "metadata": {
+        "description": "GCM API Key or Firebase Server Key. Setup your own key, this one can be revoked at any time. https://developer.xamarin.com/guides/android/application_fundamentals/notifications/firebase-cloud-messaging/#Setting_Up_Firebase_Cloud_Messaging"
+      }
+    },
+    "notificationHubNamespaceName": {
+      "type": "string",
+      "defaultValue": "[concat('wjhnnotifHubNs', uniqueString(resourceGroup().id))]"
+    },
+    "notificationHubName": {
+      "type": "string",
+      "defaultValue": "[concat('wjhnnotifHub', uniqueString(resourceGroup().id))]"
+    },
+    "notificationHubSkuName": {
+      "type": "string",
+      "defaultValue": "free",
+      "allowedValues": [
+        "free",
+        "basic",
+        "standard"
+      ]
+    },
+    "storageTypeJob": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    }
+  },
+  "variables": {
+    "hostingPlanName": "[concat('wjhnhostingPlan', uniqueString(resourceGroup().id))]",
+    "storageNameWjhnJobs": "[concat('wjhnstojh', uniqueString(resourceGroup().id, '84FC8896-BEEA-4649-8B1C-2321424D0C92'))]",
+    "websiteNameWjhnApi": "[concat('wjhnwaapi', uniqueString(resourceGroup().id, '30F5A2C2-3839-4BE1-AD4E-966538FCA995'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[variables('hostingPlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "name": "[variables('hostingPlanName')]"
+      },
+      "sku": {
+        "name": "[parameters('hostingPlanSkuName')]",
+        "capacity": "[parameters('hostingPlanSkuCapacity')]"
+      },
+      "tags": {
+        "displayName": "HostingPlan"
+      }
+    },
+    {
+      "apiVersion": "2014-09-01",
+      "name": "[parameters('notificationHubNamespaceName')]",
+      "type": "Microsoft.NotificationHubs/namespaces",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "[parameters('notificationHubSkuName')]"
+      },
+      "properties": {
+        "name": "[parameters('notificationHubNamespaceName')]",
+        "namespaceType": "NotificationHub"
+      },
+      "resources": [
+        {
+          "apiVersion": "2014-09-01",
+          "name": "[concat(parameters('notificationHubNamespaceName'),'/',parameters('notificationHubName'))]",
+          "type": "Microsoft.NotificationHubs/namespaces/notificationHubs",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.NotificationHubs/namespaces/', parameters('notificationHubNamespaceName'))]"
+          ],
+          "properties": {
+            "name": "[parameters('notificationHubName')]",
+            "gcmCredential": {
+              "properties": {
+                "gcmEndpoint": "https://android.googleapis.com/gcm/send",
+                "googleApiKey": "[parameters('notificationHubGcmApiKey')]"
+              }
+            }
+          },
+          "tags": {
+            "displayName": "NotificationHub"
+          }
+        }
+      ],
+      "tags": {
+        "displayName": "NotificationHubNamespace"
+      }
+    },
+    {
+      "apiVersion": "2016-01-01",
+      "name": "[variables('storageNameWjhnJobs')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "kind": "Storage",
+      "properties": {},
+      "sku": {
+        "name": "[parameters('storageTypeJob')]"
+      },
+      "tags": {
+        "displayName": "StorageJob"
+      }
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[variables('websiteNameWjhnApi')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverFarms/', variables('hostingPlanName'))]"
+      ],
+      "properties": {
+        "name": "[variables('websiteNameWjhnApi')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+        "siteConfig": {
+          "AlwaysOn": true
+        }
+      },
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]": "empty",
+        "displayName": "WebsiteApi"
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "name": "appsettings",
+          "type": "config",
+          "dependsOn": [
+            "[resourceId('Microsoft.NotificationHubs/namespaces/notificationHubs', parameters('notificationHubNamespaceName'), parameters('notificationHubName'))]",
+            "[resourceId('Microsoft.Storage/storageAccounts', variables('storageNameWjhnJobs'))]",
+            "[resourceId('Microsoft.Web/sites', variables('websiteNameWjhnApi'))]"
+          ],
+          "properties": {
+            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageNameWjhnJobs'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageNameWjhnJobs')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageNameWjhnJobs'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageNameWjhnJobs')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
+            "AzureWebJobsNotificationHubsConnectionString": "[listKeys(resourceId('Microsoft.NotificationHubs/namespaces/notificationHubs/authorizationRules', parameters('notificationHubNamespaceName'), parameters('notificationHubName'), 'DefaultFullSharedAccessSignature'), providers('Microsoft.NotificationHubs', 'namespaces/notificationHubs').apiVersions[0]).primaryConnectionString]",
+            "AzureWebJobsNotificationHubName": "[parameters('notificationHubName')]",
+            "wjhn:NotificationHubConnectionString": "[listKeys(resourceId('Microsoft.NotificationHubs/namespaces/notificationHubs/authorizationRules', parameters('notificationHubNamespaceName'), parameters('notificationHubName'), 'DefaultFullSharedAccessSignature'), providers('Microsoft.NotificationHubs', 'namespaces/notificationHubs').apiVersions[0]).primaryConnectionString]",
+            "wjhn:NotificationHubName": "[parameters('notificationHubName')]"
+          }
+        }
+      ]
+    }
+  ]
+}
