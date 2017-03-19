@@ -66,21 +66,21 @@ Via the Cloud Explorer in Visual Studio or your favorite explorer add messages t
 * Message **with no text**: will simulate a failing job and send a notifcation to Notification Hub
 
 
-# Useful Links
+## Useful Links
 
-## Azure Notification Hubs
+### Azure Notification Hubs
 
 * [Azure Notification Hubs Overview](https://docs.microsoft.com/en-us/azure/notification-hubs/notification-hubs-push-notification-overview)
 * [Azure Notification Hubs Frequently Asked Questions](https://docs.microsoft.com/en-us/azure/notification-hubs/notification-hubs-push-notification-faq)
 * [Azure Notification Hubs Device registration management](https://docs.microsoft.com/en-us/azure/notification-hubs/notification-hubs-push-notification-registration-management)
 
-## ﻿﻿﻿﻿Azure WebJobs SDK Extensions
+### Azure WebJobs SDK Extensions
 
 * [Notification Hubs SDK Extension](https://github.com/Azure/azure-webjobs-sdk-extensions#azure-notification-hubs)
 * [Notification Hubs SDK Extension Samples](https://github.com/Azure/azure-webjobs-sdk-extensions/blob/dev/src/ExtensionsSample/Samples/NotificationHubSamples.cs)
 * [Notification Hubs SDK Extension Sources](https://github.com/Azure/azure-webjobs-sdk-extensions/tree/master/src/WebJobs.Extensions.NotificationHubs)
 
-## Xamarin Android
+### Xamarin Android
 
 * [Remote Notifications with Firebase Cloud Messaging](https://developer.xamarin.com/guides/android/application_fundamentals/notifications/remote-notifications-with-fcm/)
 * [Setting Up Firebase Cloud Messaging](https://developer.xamarin.com/guides/android/application_fundamentals/notifications/firebase-cloud-messaging/#Setting_Up_Firebase_Cloud_Messaging)
